@@ -1,5 +1,6 @@
 import unittest
 import otp
+import hotp
 import pyotp
 
 
@@ -25,6 +26,19 @@ class Test_OTP(unittest.TestCase):
         b = pyotp.OTP("HelloWorld").generate_otp(1)
         self.assertEqual(a, b)
 
+
+class Test_HOTP(unittest.TestCase):
+    def test_generate_next_otp(self):
+        a = hotp.HOTP("HelloWorld")
+        b = otp.OTP("HelloWorld")
+
+        self.assertEqual(a.generate_next_otp(), b.generate_otp(1))
+        self.assertEqual(a.generate_next_otp(False), b.generate_otp(2))
+        self.assertEqual(a.generate_next_otp(), b.generate_otp(2))
+        self.assertEqual(a.generate_next_otp(), b.generate_otp(3))
+        a.counter = 10
+        self.assertEqual(a.generate_next_otp(), b.generate_otp(10))
+        self.assertEqual(a.generate_next_otp(), b.generate_otp(11))
 
 
 if __name__ == "__main__":
