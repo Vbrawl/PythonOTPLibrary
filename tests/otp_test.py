@@ -14,16 +14,16 @@ class Test_OTP(unittest.TestCase):
         b = pyotp.OTP("HelloWorld").byte_secret()
         self.assertEqual(a, b)
     
-    def test_OTP(self):
-        a = otp.OTP("HelloWorld").generate_otp(1)
-        b = pyotp.OTP("HelloWorld").generate_otp(1)
-        self.assertEqual(a, b)
-    
     def test_generate_key(self):
         a = otp.OTP.generate_key()
         b = otp.OTP.generate_key()
 
         self.assertNotEqual(a, b)
+    
+    def test_OTP(self):
+        a = otp.OTP("HelloWorld").generate_otp(1)
+        b = pyotp.OTP("HelloWorld").generate_otp(1)
+        self.assertEqual(a, b)
 
 
 
