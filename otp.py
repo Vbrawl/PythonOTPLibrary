@@ -20,7 +20,7 @@ class OTP:
         self.digits = digits
         self.digest = digest
     
-    def generate_otp(self, Counter:int):
+    def generate_otp(self, Counter:int) -> str:
         # Snum = HS.digest()
         Snum = hmac.new(self.key, OTP.int_to_bytestring(Counter), self.digest).digest()
         offset = Snum[-1] & 0xF
@@ -48,27 +48,26 @@ class OTP:
         return bytes(reversed(result)).rjust(8, b'\0')
     
     @staticmethod
-    def generate_key():
+    def generate_key() -> str:
         global LAST_KEY_SEED
 
         FinalSeed = b''
         # Get OS live time
-        # FinalSeed += OTP.int_to_bytestring(5)
         FinalSeed += OTP.int_to_bytestring(int(time.time() - psutil.boot_time()))
         # Get CPU load
-        # FinalSeed += OTP.int_to_bytestring(5)
         FinalSeed += OTP.int_to_bytestring(int(psutil.cpu_percent()))
         # Get RAM usage
         FinalSeed += OTP.int_to_bytestring(psutil.virtual_memory().used)
         # Get EPOCH
         FinalSeed += OTP.int_to_bytestring(int(time.time()))
-        # Get A random number from os.urandom
+        # Get random bytes
         FinalSeed += os.urandom(32)
 
         if LAST_KEY_SEED is not None:
+            # Add FinalSeedLength / 2 random bytes to FinalSeed
             half_length = len(FinalSeed) // 2
             LAST_KEY_SEED_LENGTH = len(LAST_KEY_SEED)
             FinalSeed += bytes(random.choices(LAST_KEY_SEED, k = LAST_KEY_SEED_LENGTH - half_length))
         LAST_KEY_SEED = FinalSeed
 
-        return hashlib.sha3_512(FinalSeed)
+        return hashlib.sha3_512(FinalSeed).hexdigest()
