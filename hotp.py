@@ -10,7 +10,7 @@ class HOTP(otp.OTP):
         super().__init__(key, digits, digest)
         self.counter = counter
     
-    def generate_next_otp(self, advance_counter = True):
+    def generate_otp(self, advance_counter = True):
         otp = super().generate_otp(self.counter)
         if advance_counter: self.counter += 1
         return otp
